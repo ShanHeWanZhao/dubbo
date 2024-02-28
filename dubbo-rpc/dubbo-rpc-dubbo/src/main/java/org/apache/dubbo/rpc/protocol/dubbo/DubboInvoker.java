@@ -59,6 +59,9 @@ import static org.apache.dubbo.rpc.Constants.TOKEN_KEY;
  */
 public class DubboInvoker<T> extends AbstractInvoker<T> {
 
+    /**
+     * 发送请求的Client。真正发送请求是在HeaderExchangeClient里，不过这个字段还被ReferenceCountExchangeClient给包装了一层
+     */
     private final ExchangeClient[] clients;
 
     private final AtomicPositiveInteger index = new AtomicPositiveInteger();

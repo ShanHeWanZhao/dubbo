@@ -48,8 +48,14 @@ public class DefaultFuture extends CompletableFuture<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultFuture.class);
 
+    /**
+     * id为当前客户端的请求id，value为其当前请求使用的Channel（也应该从这个Channel中获取响应）
+     */
     private static final Map<Long, Channel> CHANNELS = new ConcurrentHashMap<>();
 
+    /**
+     * id为当前客户端的请求id，value为其对应的响应Future
+     */
     private static final Map<Long, DefaultFuture> FUTURES = new ConcurrentHashMap<>();
 
     public static final Timer TIME_OUT_TIMER = new HashedWheelTimer(
@@ -61,6 +67,9 @@ public class DefaultFuture extends CompletableFuture<Object> {
     private final Long id;
     private final Channel channel;
     private final Request request;
+    /**
+     * 超时时间（从开始发送Request到接收到Response的时间），默认1秒
+     */
     private final int timeout;
     private final long start = System.currentTimeMillis();
     private volatile long sent;
@@ -87,7 +96,8 @@ public class DefaultFuture extends CompletableFuture<Object> {
     }
 
     /**
-     * check time out of the future
+     * check time out of the future <p/>
+     * 构建这个Future的超时处理任务（由URL的timeout参数决定等待时间）
      */
     private static void timeoutCheck(DefaultFuture future) {
         TimeoutCheckTask task = new TimeoutCheckTask(future.getId());

@@ -17,13 +17,19 @@
 package org.apache.dubbo.demo.provider;
 
 import org.apache.dubbo.demo.GreetingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class GreetingServiceImpl implements GreetingService {
+
+    private static final Logger logger = LoggerFactory.getLogger(GreetingServiceImpl.class);
     @Override
     public String hello() {
-        return "Greetings!";
+        logger.info("触发了GreetingService的hello方法");
+        throw new MyException("自定义的异常");
+//        return "Greetings!";
     }
 }

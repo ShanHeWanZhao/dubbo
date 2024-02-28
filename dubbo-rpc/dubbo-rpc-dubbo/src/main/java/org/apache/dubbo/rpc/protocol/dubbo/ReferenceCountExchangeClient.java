@@ -35,7 +35,8 @@ import static org.apache.dubbo.remoting.Constants.SEND_RECONNECT_KEY;
 import static org.apache.dubbo.rpc.protocol.dubbo.Constants.LAZY_CONNECT_INITIAL_STATE_KEY;
 
 /**
- * dubbo protocol support class.
+ * dubbo protocol support class. <p/>
+ * 装饰者模式的ExchangeClient，提供了新的被引用后计数的功能
  */
 @SuppressWarnings("deprecation")
 final class ReferenceCountExchangeClient implements ExchangeClient {

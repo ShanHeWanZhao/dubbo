@@ -40,7 +40,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.READONLY_EVENT;
 
 
 /**
- * ExchangeReceiver
+ * ExchangeReceiver <p/>
+ * provider和consumer端通用的ExchangeHandler
  */
 public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
@@ -77,7 +78,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
 
     void handleRequest(final ExchangeChannel channel, Request req) throws RemotingException {
         Response res = new Response(req.getId(), req.getVersion());
-        if (req.isBroken()) {
+        if (req.isBroken()) { // Request数据解码失败
             Object data = req.getData();
 
             String msg;
@@ -107,6 +108,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
                         res.setStatus(Response.SERVICE_ERROR);
                         res.setErrorMessage(StringUtils.toString(t));
                     }
+                    // provider端向consumer发送Response
                     channel.send(res);
                 } catch (RemotingException e) {
                     logger.warn("Send result to consumer failed, channel is " + channel + ", msg is " + e);
@@ -165,19 +167,19 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
         final ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);
-        if (message instanceof Request) {
+        if (message instanceof Request) { // message为Request，provider会走这
             // handle request.
             Request request = (Request) message;
             if (request.isEvent()) {
                 handlerEvent(channel, request);
             } else {
-                if (request.isTwoWay()) {
+                if (request.isTwoWay()) { // 需要返回数据（一般都是这个）
                     handleRequest(exchangeChannel, request);
                 } else {
                     handler.received(exchangeChannel, request.getData());
                 }
             }
-        } else if (message instanceof Response) {
+        } else if (message instanceof Response) { // message为Response，consumer会走这
             handleResponse(channel, (Response) message);
         } else if (message instanceof String) {
             if (isClientSide(channel)) {

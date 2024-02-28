@@ -21,9 +21,10 @@ import org.apache.dubbo.demo.GreetingService;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
-public class Application {
+public class XmlConsumerApplication {
     /**
      * In order to make sure multicast registry works, need to specify '-Djava.net.preferIPv4Stack=true' before
      * launch the application
@@ -33,27 +34,34 @@ public class Application {
         context.start();
         DemoService demoService = context.getBean("demoService", DemoService.class);
         GreetingService greetingService = context.getBean("greetingService", GreetingService.class);
-
-        new Thread(() -> {
-            while (true) {
-                String greetings = greetingService.hello();
-                System.out.println(greetings + " from separated thread.");
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        System.out.println("Consumer端启动完成，等待输入指令");
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNext()) {
+            String s = scanner.nextLine();
+            switch (Integer.parseInt(s)) {
+                case 1:
+                    try {
+                        System.out.println("GreetingService hello Method :" + greetingService.hello());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case 2:
+                    CompletableFuture<String> future = demoService.sayHelloAsync("DemoService sayHelloAsync Method");
+                    future.whenComplete((s1, throwable) -> {
+                        if (throwable != null){
+                            throwable.printStackTrace();
+                        }
+                        System.out.println("当前线程：" + Thread.currentThread().getName());
+                        System.out.println(s1);
+                    });
+                    break;
+                case 3:
+                    System.out.println(demoService.sayHello("DemoService sayHello Method"));
+                    break;
+                default:
+                    break;
             }
-        }).start();
-
-        while (true) {
-            CompletableFuture<String> hello = demoService.sayHelloAsync("world");
-            System.out.println("result: " + hello.get());
-
-            String greetings = greetingService.hello();
-            System.out.println("result: " + greetings);
-
-            Thread.sleep(500);
         }
     }
 }

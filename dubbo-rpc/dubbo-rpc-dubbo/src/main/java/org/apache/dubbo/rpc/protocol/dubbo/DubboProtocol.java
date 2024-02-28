@@ -309,6 +309,11 @@ public class DubboProtocol extends AbstractProtocol {
         return exporter;
     }
 
+    /**
+     * 1.启动Netty服务端，添加对应的Handler等。<br/>
+     * 2.初始化当前Server的DubboServerHandler线程池（netty的IO线程会把执行业务逻辑部分的代码封装为Runnable扔到这个线程池执行，避免占用IO线程）
+     * @param url
+     */
     private void openServer(URL url) {
         // find server.
         String key = url.getAddress();
@@ -346,6 +351,7 @@ public class DubboProtocol extends AbstractProtocol {
 
         ExchangeServer server;
         try {
+            // 绑定当前URL对应的的Handler
             server = Exchangers.bind(url, requestHandler);
         } catch (RemotingException e) {
             throw new RpcException("Fail to start server(url: " + url + ") " + e.getMessage(), e);
@@ -410,6 +416,7 @@ public class DubboProtocol extends AbstractProtocol {
     }
 
     private ExchangeClient[] getClients(URL url) {
+        // dubbo默认使用的就是共享Connection（即url的ip和port一样的情况下，对这个url的请求都走一个Channel）
         // whether to share connection
         int connections = url.getParameter(CONNECTIONS_KEY, 0);
         // if not configured, connection is shared, otherwise, one connection for one service
@@ -418,6 +425,7 @@ public class DubboProtocol extends AbstractProtocol {
              * The xml configuration should have a higher priority than properties.
              */
             String shareConnectionsStr = url.getParameter(SHARE_CONNECTIONS_KEY, (String) null);
+            // connections默认为1
             connections = Integer.parseInt(StringUtils.isBlank(shareConnectionsStr) ? ConfigUtils.getProperty(SHARE_CONNECTIONS_KEY,
                     DEFAULT_SHARE_CONNECTIONS) : shareConnectionsStr);
             return getSharedClient(url, connections).toArray(new ExchangeClient[0]);
@@ -434,7 +442,7 @@ public class DubboProtocol extends AbstractProtocol {
     /**
      * Get shared connection
      *
-     * @param url
+     * @param url 注册中心的url，对应xml的 dubbo:registry 标签解析结果
      * @param connectNum connectNum must be greater than or equal to 1
      */
     @SuppressWarnings("unchecked")

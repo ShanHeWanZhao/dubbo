@@ -35,7 +35,8 @@ public class ProtocolConfig extends AbstractConfig {
     private static final long serialVersionUID = 6913423882496634749L;
 
     /**
-     * Protocol name
+     * Protocol name <p/>
+     * 默认为 dubbo
      */
     private String name;
 

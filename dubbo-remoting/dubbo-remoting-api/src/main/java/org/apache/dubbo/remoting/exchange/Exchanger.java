@@ -33,7 +33,8 @@ import org.apache.dubbo.remoting.exchange.support.header.HeaderExchanger;
 public interface Exchanger {
 
     /**
-     * bind.
+     * bind. <p/>
+     * provider端使用
      *
      * @param url
      * @param handler
@@ -43,7 +44,8 @@ public interface Exchanger {
     ExchangeServer bind(URL url, ExchangeHandler handler) throws RemotingException;
 
     /**
-     * connect.
+     * connect. <p/>
+     * consumer端使用
      *
      * @param url
      * @param handler

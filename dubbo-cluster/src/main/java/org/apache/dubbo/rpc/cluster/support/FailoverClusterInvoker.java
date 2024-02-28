@@ -41,7 +41,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.RETRIES_KEY;
  * When invoke fails, log the initial error and retry other invokers (retry n times, which means at most n different invokers will be invoked)
  * Note that retry causes latency.
  * <p>
- * <a href="http://en.wikipedia.org/wiki/Failover">Failover</a>
+ * <a href="http://en.wikipedia.org/wiki/Failover">Failover</a> <p/>
+ * 失败重试的ClusterInvoker，重试次数就是配置的retries
  *
  */
 public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
@@ -58,12 +59,14 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
         List<Invoker<T>> copyInvokers = invokers;
         checkInvokers(copyInvokers, invocation);
         String methodName = RpcUtils.getMethodName(invocation);
+        // 重试次数
         int len = calculateInvokeTimes(methodName);
         // retry loop.
         RpcException le = null; // last exception.
         List<Invoker<T>> invoked = new ArrayList<Invoker<T>>(copyInvokers.size()); // invoked invokers.
+        // 已经使用过的Invoker集合
         Set<String> providers = new HashSet<String>(len);
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++) { // 循环尝试重试
             //Reselect before retry to avoid a change of candidate `invokers`.
             //NOTE: if `invokers` changed, then `invoked` also lose accuracy.
             if (i > 0) {
@@ -91,6 +94,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 return result;
             } catch (RpcException e) {
                 if (e.isBiz()) { // biz exception.
+                    // 业务抛出了异常，本质还是调用成功了。所以在这里直接抛出去，不用再重试
                     throw e;
                 }
                 le = e;

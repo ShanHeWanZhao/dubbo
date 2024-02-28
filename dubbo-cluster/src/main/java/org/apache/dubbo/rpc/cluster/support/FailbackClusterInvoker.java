@@ -44,7 +44,9 @@ import static org.apache.dubbo.rpc.cluster.Constants.FAIL_BACK_TASKS_KEY;
  * When fails, record failure requests and schedule for retry on a regular interval.
  * Especially useful for services of notification.
  *
- * <a href="http://en.wikipedia.org/wiki/Failback">Failback</a>
+ * <a href="http://en.wikipedia.org/wiki/Failback">Failback</a> <p/>
+ * 失败定时重试的ClusterInvoker。当请求失败时，如果配置了retries则会将请求封装成一个task，投入到一个线程池中再延迟指定时间后再执行。<br/>
+ * 注意，这也是一种安全失败的ClusterInvoker，因为就算没有重试或重试到最大次数了还是请求失败，它也不会抛出异常，而只是记录错误日志，返回一个异步的结果
  */
 public class FailbackClusterInvoker<T> extends AbstractClusterInvoker<T> {
 

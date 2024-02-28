@@ -43,6 +43,10 @@ public abstract class AbstractCodec implements Codec2 {
 
     private static final String SERVER_SIDE = "server";
 
+    /**
+     * 检查消息体请求数据大小，默认不超过8M
+     * @throws IOException
+     */
     protected static void checkPayload(Channel channel, long size) throws IOException {
         int payload = getPayload(channel);
         boolean overPayload = isOverPayload(payload, size);

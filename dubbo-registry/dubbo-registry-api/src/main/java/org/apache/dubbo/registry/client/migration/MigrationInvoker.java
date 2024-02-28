@@ -325,7 +325,7 @@ public class MigrationInvoker<T> implements MigrationClusterInvoker<T> {
     @Override
     public synchronized void refreshInterfaceInvoker() {
         clearListener(invoker);
-        if (needRefresh(invoker)) {
+        if (needRefresh(invoker)) { // invoker为null，会走到里面来
             // FIXME invoker.destroy();
             if (logger.isDebugEnabled()) {
                 logger.debug("Re-subscribing interface addresses for interface " + type.getName());

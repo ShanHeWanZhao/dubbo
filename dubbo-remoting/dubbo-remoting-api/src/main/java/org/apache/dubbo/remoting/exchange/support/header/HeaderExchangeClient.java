@@ -45,6 +45,9 @@ import static org.apache.dubbo.remoting.utils.UrlUtils.getIdleTimeout;
  */
 public class HeaderExchangeClient implements ExchangeClient {
 
+    /**
+     * 默认实现：NettyClient
+     */
     private final Client client;
     private final ExchangeChannel channel;
 

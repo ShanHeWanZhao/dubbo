@@ -93,16 +93,16 @@ public class MockClusterInvoker<T> implements ClusterInvoker<T> {
         Result result = null;
 
         String value = getUrl().getMethodParameter(invocation.getMethodName(), MOCK_KEY, Boolean.FALSE.toString()).trim();
-        if (value.length() == 0 || "false".equalsIgnoreCase(value)) {
+        if (value.length() == 0 || "false".equalsIgnoreCase(value)) { // 不走mock
             //no mock
             result = this.invoker.invoke(invocation);
-        } else if (value.startsWith("force")) {
+        } else if (value.startsWith("force")) { // 强制走mock，不调用远程的provider
             if (logger.isWarnEnabled()) {
                 logger.warn("force-mock: " + invocation.getMethodName() + " force-mock enabled , url : " + getUrl());
             }
             //force:direct mock
             result = doMockInvoke(invocation, null);
-        } else {
+        } else { // 先调用远程的provider，出现异常但不是业务异常后再mock
             //fail-mock
             try {
                 result = this.invoker.invoke(invocation);

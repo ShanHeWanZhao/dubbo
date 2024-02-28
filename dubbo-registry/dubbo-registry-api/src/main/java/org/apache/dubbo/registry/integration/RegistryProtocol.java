@@ -225,7 +225,6 @@ public class RegistryProtocol implements Protocol {
         // register stated url on provider model
         registerStatedUrl(registryUrl, registeredProviderUrl, register);
 
-
         exporter.setRegisterUrl(registeredProviderUrl);
         exporter.setSubscribeUrl(overrideSubscribeUrl);
 
@@ -519,7 +518,7 @@ public class RegistryProtocol implements Protocol {
         // all attributes of REFER_KEY
         Map<String, String> parameters = new HashMap<String, String>(directory.getConsumerUrl().getParameters());
         URL urlToRegistry = new URL(CONSUMER_PROTOCOL, parameters.remove(REGISTER_IP_KEY), 0, type.getName(), parameters);
-        if (directory.isShouldRegister()) {
+        if (directory.isShouldRegister()) { // 向注册中心注册consumer
             directory.setRegisteredConsumerUrl(urlToRegistry);
             registry.register(directory.getRegisteredConsumerUrl());
         }
@@ -539,6 +538,11 @@ public class RegistryProtocol implements Protocol {
         migrationClusterInvoker.reRefer(newSubscribeUrl);
     }
 
+    /**
+     * 需要订阅的URL分类有 providers，configurators，routers
+     * @param url
+     * @return
+     */
     public static URL toSubscribeUrl(URL url) {
         return url.addParameter(CATEGORY_KEY, PROVIDERS_CATEGORY + "," + CONFIGURATORS_CATEGORY + "," + ROUTERS_CATEGORY);
     }

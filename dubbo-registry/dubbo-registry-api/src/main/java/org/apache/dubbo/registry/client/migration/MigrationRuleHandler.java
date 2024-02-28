@@ -46,7 +46,7 @@ public class MigrationRuleHandler<T> {
 
         migrationInvoker.setMigrationRule(rule);
 
-        if (migrationInvoker.isMigrationMultiRegistry()) {
+        if (migrationInvoker.isMigrationMultiRegistry()) { // 默认不走这
             if (migrationInvoker.isServiceInvoker()) {
                 migrationInvoker.refreshServiceDiscoveryInvoker();
             } else {
@@ -61,7 +61,7 @@ public class MigrationRuleHandler<T> {
                     migrationInvoker.migrateToServiceDiscoveryInvoker(true);
                     break;
                 case FORCE_INTERFACE:
-                default:
+                default: // 默认到这
                     migrationInvoker.fallbackToInterfaceInvoker();
             }
         }

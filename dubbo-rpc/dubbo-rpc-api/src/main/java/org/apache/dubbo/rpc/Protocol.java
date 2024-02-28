@@ -42,7 +42,9 @@ public interface Protocol {
      * RpcContext.getContext().setRemoteAddress();<br>
      * 2. export() must be idempotent, that is, there's no difference between invoking once and invoking twice when
      * export the same URL<br>
-     * 3. Invoker instance is passed in by the framework, protocol needs not to care <br>
+     * 3. Invoker instance is passed in by the framework, protocol needs not to care <br> <p/>
+     *
+     * provider的导出方法，即将provider暴露到注册中心去
      *
      * @param <T>     Service type
      * @param invoker Service invoker
@@ -59,7 +61,9 @@ public interface Protocol {
      * 2. It's protocol's responsibility to implement `Invoker` which's returned from `refer()`. Generally speaking,
      * protocol sends remote request in the `Invoker` implementation. <br>
      * 3. When there's check=false set in URL, the implementation must not throw exception but try to recover when
-     * connection fails.
+     * connection fails. <p/>
+     * consumer的参考方法，即从注册中心获取对应的Provider <p/>
+     * 拿指定URL的protocol的实现类来refer
      *
      * @param <T>  Service type
      * @param type Service class

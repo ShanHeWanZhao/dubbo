@@ -41,7 +41,8 @@ import static org.apache.dubbo.rpc.protocol.dubbo.Constants.LAZY_CONNECT_INITIAL
 import static org.apache.dubbo.rpc.protocol.dubbo.Constants.LAZY_REQUEST_WITH_WARNING_KEY;
 
 /**
- * dubbo protocol support class.
+ * dubbo protocol support class. <p/>
+ * 懒加载模式的ExchangeClient，只有在发起Request时才会创建真正的ExchangeClient（即HeaderExchangeClient）
  */
 @SuppressWarnings("deprecation")
 final class LazyConnectExchangeClient implements ExchangeClient {

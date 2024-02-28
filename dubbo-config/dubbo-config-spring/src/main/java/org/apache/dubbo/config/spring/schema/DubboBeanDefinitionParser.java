@@ -82,8 +82,9 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         RootBeanDefinition beanDefinition = new RootBeanDefinition();
         beanDefinition.setBeanClass(beanClass);
         beanDefinition.setLazyInit(false);
+        // bean的name优先使用id标签
         String id = resolveAttribute(element, "id", parserContext);
-        if (StringUtils.isEmpty(id) && required) {
+        if (StringUtils.isEmpty(id) && required) { // id标签不存在，去其他标签（比如name或interface）
             String generatedBeanName = resolveAttribute(element, "name", parserContext);
             if (StringUtils.isEmpty(generatedBeanName)) {
                 if (ProtocolConfig.class.equals(beanClass)) {
@@ -102,7 +103,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
             }
         }
         if (StringUtils.isNotEmpty(id)) {
-            if (parserContext.getRegistry().containsBeanDefinition(id)) {
+            if (parserContext.getRegistry().containsBeanDefinition(id)) { // 重复bean定义抛异常
                 throw new IllegalStateException("Duplicate spring bean id " + id);
             }
             parserContext.getRegistry().registerBeanDefinition(id, beanDefinition);

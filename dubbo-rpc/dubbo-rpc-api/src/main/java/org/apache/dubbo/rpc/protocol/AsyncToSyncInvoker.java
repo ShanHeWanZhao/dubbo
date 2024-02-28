@@ -30,7 +30,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class will work as a wrapper wrapping outside of each protocol invoker.
+ * This class will work as a wrapper wrapping outside of each protocol invoker. <p/>
+ * 异步转同步的Invoker
  *
  * @param <T>
  */

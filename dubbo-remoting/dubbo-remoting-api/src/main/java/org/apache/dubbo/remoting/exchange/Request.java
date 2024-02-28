@@ -33,10 +33,21 @@ public class Request {
 
     private String mVersion;
 
+    /**
+     * 标志Request是否需要服务端的响应<p/>
+     * 如果为true，则会收到Response <br/>
+     * 为false，则不会收到这个Request对应的Response
+     */
     private boolean mTwoWay = true;
 
+    /**
+     * 标志当前Request是否是一个服务的内部事件（比如心跳检测这种）
+     */
     private boolean mEvent = false;
 
+    /**
+     * decode这个Request失败后，会设置mBroken为true，代表解码失败，消息格式可能有问题
+     */
     private boolean mBroken = false;
 
     private Object mData;
@@ -49,6 +60,13 @@ public class Request {
         mId = id;
     }
 
+    /**
+     * 构建Request的id。<br/>
+     * 这个是不需要用分布式id来保持全局唯一的，因为一旦确定了consumer端和provider端，ip和port也就确定了，
+     * socket会保证Response的正确返回（返回到对应Request的客户端），对这个客户端来说，id都是唯一的。<br/>
+     * 当请求id增加到最大值时（这个是long型），下一次的newId()又回退到最小值，来循环使用id，避免id的用尽。
+     * 这肯定是个漫长的过程，所以不可能出现到第二轮了，上一轮的id对应的Request还没有处理掉（因为内部有个超时检测任务，默认1秒内没有收到Response就会超时）
+     */
     private static long newId() {
         // getAndIncrement() When it grows to MAX_VALUE, it will grow to MIN_VALUE, and the negative can be used as ID
         return INVOKE_ID.getAndIncrement();

@@ -228,8 +228,9 @@ public class ExchangeCodec extends TelnetCodec {
         // header.
         byte[] header = new byte[HEADER_LENGTH];
         // set magic number.
-        Bytes.short2bytes(MAGIC, header);
+        Bytes.short2bytes(MAGIC, header); // 设置2 byte的dubbo魔数
 
+        // 请求头的第三个byte存放了4种数据，分别是：is请求或is响应（1bit），isTwoWay（1bit），isEvent（1bit） 和 低五位的序列化器类型id
         // set request and serialization flag.
         header[2] = (byte) (FLAG_REQUEST | serialization.getContentTypeId());
 
@@ -240,6 +241,7 @@ public class ExchangeCodec extends TelnetCodec {
             header[2] |= FLAG_EVENT;
         }
 
+        // herder的4-12存放请求id
         // set request id.
         Bytes.long2bytes(req.getId(), header, 4);
 
@@ -268,12 +270,13 @@ public class ExchangeCodec extends TelnetCodec {
         bos.close();
         int len = bos.writtenBytes();
         checkPayload(channel, len);
+        // herder的12-16位置存放了请求体的数据大小，因为只有4个byte长度，就注定了请求体大小不可能超过4G
         Bytes.int2bytes(len, header, 12);
 
         // write
-        buffer.writerIndex(savedWriteIndex);
+        buffer.writerIndex(savedWriteIndex); // 先重新设置write index，方便写入后续的消息头数据
         buffer.writeBytes(header); // write header.
-        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
+        buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len); // 恢复write index，消息（消息头和消息体）写入完毕
     }
 
     protected void encodeResponse(Channel channel, ChannelBuffer buffer, Response res) throws IOException {

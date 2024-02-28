@@ -33,6 +33,9 @@ public class ChannelBufferOutputStream extends OutputStream {
         startIndex = buffer.writerIndex();
     }
 
+    /**
+     * 消息体的大小（排除了消息头部分）
+     */
     public int writtenBytes() {
         return buffer.writerIndex() - startIndex;
     }

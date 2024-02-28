@@ -200,7 +200,7 @@ public class AdaptiveClassCodeGenerator {
     private String generateMethodContent(Method method) {
         Adaptive adaptiveAnnotation = method.getAnnotation(Adaptive.class);
         StringBuilder code = new StringBuilder(512);
-        if (adaptiveAnnotation == null) {
+        if (adaptiveAnnotation == null) { // 如果方法上没有@Adaptive注解，将直接在实现类的这个方法里抛出UnsupportedOperationException异常
             return generateUnsupported(method);
         } else {
             int urlTypeIndex = getUrlTypeIndex(method);
@@ -208,6 +208,7 @@ public class AdaptiveClassCodeGenerator {
             // found parameter in URL type
             if (urlTypeIndex != -1) {
                 // Null Point check
+                // URL参数不为空检查
                 code.append(generateUrlNullCheck(urlTypeIndex));
             } else {
                 // did not find parameter in URL type

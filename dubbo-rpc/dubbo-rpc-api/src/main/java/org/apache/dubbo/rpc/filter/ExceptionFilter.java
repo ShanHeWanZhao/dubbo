@@ -54,7 +54,7 @@ public class ExceptionFilter implements Filter, Filter.Listener {
 
     @Override
     public void onResponse(Result appResponse, Invoker<?> invoker, Invocation invocation) {
-        if (appResponse.hasException() && GenericService.class != invoker.getInterface()) {
+        if (appResponse.hasException() && GenericService.class != invoker.getInterface()) { // 异常处理机制
             try {
                 Throwable exception = appResponse.getException();
 

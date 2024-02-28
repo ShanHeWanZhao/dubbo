@@ -101,11 +101,20 @@ public class ExtensionLoader<T> {
 
     private final Map<String, Object> cachedActivates = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
+    /**
+     * 缓存起来的Adaptive实例
+     */
     private final Holder<Object> cachedAdaptiveInstance = new Holder<>();
     private volatile Class<?> cachedAdaptiveClass = null;
+    /**
+     * class上@SPI注解里的value值
+     */
     private String cachedDefaultName;
     private volatile Throwable createAdaptiveInstanceError;
 
+    /**
+     * 需要包装的class类型
+     */
     private Set<Class<?>> cachedWrapperClasses;
 
     private Map<String, IllegalStateException> exceptions = new ConcurrentHashMap<>();
@@ -665,7 +674,7 @@ public class ExtensionLoader<T> {
             injectExtension(instance);
 
 
-            if (wrap) {
+            if (wrap) { // 需要包装
 
                 List<Class<?>> wrapperClassesList = new ArrayList<>();
                 if (cachedWrapperClasses != null) {
@@ -954,7 +963,7 @@ public class ExtensionLoader<T> {
         }
         if (clazz.isAnnotationPresent(Adaptive.class)) {
             cacheAdaptiveClass(clazz, overridden);
-        } else if (isWrapperClass(clazz)) {
+        } else if (isWrapperClass(clazz)) { // 这个class的构造方法就是当前接口类型，就需要包装一下
             cacheWrapperClass(clazz);
         } else {
             clazz.getConstructor();

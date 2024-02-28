@@ -24,7 +24,8 @@ import static org.apache.dubbo.common.constants.CommonConstants.HEARTBEAT_EVENT;
 public class Response {
 
     /**
-     * ok.
+     * ok. <p/>
+     * 表示响应成功（包括业务代码抛出的异常也算处理成功）
      */
     public static final byte OK = 20;
 
@@ -78,14 +79,23 @@ public class Response {
      */
     public static final byte SERVER_THREADPOOL_EXHAUSTED_ERROR = 100;
 
+    /**
+     * 对应Request的id
+     */
     private long mId = 0;
 
     private String mVersion;
 
+    /**
+     * 响应码
+     */
     private byte mStatus = OK;
 
     private boolean mEvent = false;
 
+    /**
+     * provider端抛出业务异常后的异常信息
+     */
     private String mErrorMsg;
 
     private Object mResult;
